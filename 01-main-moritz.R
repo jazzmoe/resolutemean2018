@@ -17,7 +17,7 @@
 rm(list=ls())
 
 ## Setting working directory
-try(setwd("C:/Users/Moritz/OneDrive/data-fest2018"), silent = TRUE)
+try(setwd("C:\Users\Moritz\Desktop\resolutemean2018"), silent = TRUE)
 try(setwd("includeyourfolder"), silent = TRUE)
 
 
