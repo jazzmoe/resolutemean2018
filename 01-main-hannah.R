@@ -39,9 +39,13 @@ CONN <- data.table::fread("./data/data/conn.csv")
 GEOLOCATION <-  data.table::fread("./data/data/geolocation.csv")
 FILES <-  data.table::fread("./data/data/files.csv")
 
+load("./oecd-data/CONN.OECD.r")
+
+
+
 #Info geolocation
-unique(GEO$location)
-locFreq <- as_data_frame(table(GEO$location))
+unique(GEOLOCATION$location)
+locFreq <- as_data_frame(table(GEOLOCATION$location))
 
 
 #duration as numeric
@@ -91,7 +95,7 @@ IPfreq <- as.data.frame(table(CONN$id.orig_h)) %>% rename(id.orig_h = Var1)
 CONN <- left_join(CONN, IPfreq, by="id.orig_h")
 GEOLOCATION <- rename(GEOLOCATION, id.orig_h = ip)
 CONN <- left_join(CONN, GEOLOCATION, by="id.orig_h")
-CONN <- select(CONN, -Freq.x)
+
 
 # 158 countries 
 length(unique(GEOLOCATION$location))
@@ -100,59 +104,106 @@ locFreq <- as.data.frame(table(GEOLOCATION$location))
 
 #1. scatterplot - duration and frequency of IP address# 
 glimpse(CONN)
-plot1 <- CONN %>% ggplot(aes(x = duration, y = Freq.y), na.rm = T)+
+plot1 <- CONN %>% ggplot(aes(x = duration, y = Freq), na.rm = T)+
   geom_point()
 
 #2. scatterplot - duration and frequency of IP address, w/o Germany# 
 
-plot2 <- CONN %>% filter(Freq.y < 10000) %>%  
-  ggplot(aes(x = duration, y = Freq.y), na.rm = T)+
+plot2 <- CONN %>% filter(Freq < 10000) %>%  
+  ggplot(aes(x = duration, y = Freq), na.rm = T)+
   geom_point()
-
-#3. scatterplot - aggregated duration and IP address#
-
-plot3 <- SUMDUR %>% ggplot(aes(x = sumdur, y = Freq), na.rm = T)+
-  geom_point()
-
-#4. scatterplot - aggregated duration and IP address, with colours etc.#
-
-plot4 <- SUMDUR %>% ggplot(aes(x = sumdur, y = Freq), na.rm = T)+
-  geom_point()
-
-
-#country count
-CountryCount <- CONN %>% group_by(location) %>% summarise(count=n())
-CountryCount <- merge(CountryCount, locFreq, by = 'location')
-locFreq <- rename(locFreq, location = Var1)
 
 #sum of the durations # 
-SUMDUR <- CONN %>% select(ts, id.orig_h, duration) %>%
-          filter(!is.na(duration)) %>% 
-          group_by(id.orig_h) %>% 
-          summarise(sumdur = sum(duration))
+SUMDUR <- CONN.OECD %>% select(id.orig_h, duration, location, 
+                               gdp.per.capita, broadband.per.100, 
+                               population, education.spending) %>%
+        filter(!is.na(duration)) %>% 
+        group_by(id.orig_h)
+
+%>% 
+  summarise(sumdur = sum(duration))
+
+SUMDUR <- merge(SUMDUR, IPfreq, by = 'id.orig_h')
 
 sum(is.na(SUMDUR$sumdur))
 sum(is.na(CONN$duration))
 
-SUMDUR <- merge(SUMDUR, IPfreq, by = 'id.orig_h')
+#3. scatterplot - aggregated duration and IP address#
+
+plot3 <- SUMDUR %>% filter(sumdur < 200000, Freq < 200000) %>% 
+  ggplot(aes(x = sumdur, y = Freq), na.rm = T)+
+  geom_point()
+
+plot3 + geom_jitter(aes(col=CONN.OECD$gdp.per.capita, 
+                        size=CONN.OECD$broadband.per.100))
+
+
+
+
+#country count
+CountryCount <- CONN.OECD %>% group_by(location) %>% summarise(count=n())
+CountryCount <- merge(CountryCount, locFreq, by = 'location')
+locFreq <- rename(locFreq, location = Var1)
+
+
+
 
 #add country data to SUMDUR# 
 SUMDUR <- merge(SUMDUR, GEOLOCATION, by = 'id.orig_h')
 
 
 
+#heatmap#
+
+GEOLOCATION <- data.table::fread("geolocation.csv")
+CONN <- data.table::fread("conn.csv")
+load("./oecd-data/CONN.OECD.r")
+countries <- unique(GEOLOCATION$location)
+length(countries)
+length(unique(GEOLOCATION$id.orig_h))
+locFreq <- as.data.frame(table(GEOLOCATION$location))
+
+longduration <- subset(CONN.OECD, duration > 600)
+longduration$formatteddate <- anytime(longduration$ts)
+longduration$formatteddate <- as.Date(longduration$formatteddate)
+longduration$year<-as.numeric(as.POSIXlt(longduration$formatteddate)$year+1900)
+longduration$month<-as.numeric(as.POSIXlt(longduration$formatteddate)$mon+1)
+longduration$monthf<-factor(longduration$month,levels=as.character(1:12),labels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"),ordered=TRUE)
+longduration$weekday = as.POSIXlt(longduration$formatteddate)$wday
+longduration$weekdayf<-factor(longduration$weekday,levels=rev(1:7),labels=rev(c("Mon","Tue","Wed","Thu","Fri","Sat","Sun")),ordered=TRUE)
+longduration$yearmonth<-as.yearmon(longduration$formatteddate)
+longduration$yearmonthf<-factor(longduration$yearmonth)
+longduration$week <- as.numeric(format(longduration$formatteddate,"%W"))
+longduration<-ddply(longduration,.(yearmonthf),transform,monthweek=1+week-min(week))
+
+longduration$totcon <- seq(from= 1, to=1)
+
+longduration$totcon <- as.numeric(longduration$totcon)
+
+write.dta(longduration, "/Users/hannahmiles/Documents/GitHub/resolutemean2018/hannahmap.dta")
+
+longduration2 <- read.dta13("/Users/hannahmiles/Documents/GitHub/resolutemean2018/hannahmap.dta")
+
+P<- ggplot(longduration2, aes(monthweek, weekdayf, fill = totcon)) + 
+  geom_tile(colour = "white") + facet_grid(year~monthf) + scale_fill_gradient(low="yellow", high="red") + xlab("Week of Month") + ylab("")
+P
+
+
+
+#number of attempts aggregated per day
+
+AT.PER.DAY <- CONN.OECD %>% select(date) %>% 
+  mutate(date.day = ymd(date))
+
+#countries with most requests
+
+CONN.OECD1 <- CONN.OECD %>% select(location, locFreq) %>% 
+  arrange(locFreq)
+
+
+
           
 
-
-CONN %>% filter(Freq.y < 10000) %>%  
-  ggplot(aes(x = duration, y = Freq.y), na.rm = T)+
-  geom_point()
-
-
-
-
-
-load("./oecd-data/OECD.WDI.r")
 
 
 
