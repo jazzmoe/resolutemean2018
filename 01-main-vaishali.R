@@ -123,6 +123,11 @@ conn2 <- filter(conn1, location=="United States"|location=="Germany")
 ggplot(conn2, aes(yearmonthf, duration, group=location, color=location)) + geom_line() +
    xlab("") + ylab("Duration")
 
+###Stacked area plot
+ggplot(conn2, aes(yearmonthf, duration, group=location, fill=location)) + geom_area(position = 'identity')
+
+
+
 #######################################################################################
 
 #plot1 <- ggplot2::ggplot(conn1, aes(monthweek, day, fill = orig_ip_bytes)) + 
