@@ -126,6 +126,7 @@ CONN.loc <- CONN %>% filter(!is.na(CONN$location))
 
 # merge OECD and CONN data
 CONN.OECD <- left_join(CONN.loc, OECD.WDI, key = location)
+save(CONN.OECD, file = "./oecd-data/CONN.OECD.r")
 
 ########################
 ##### Descriptives #####
