@@ -1,0 +1,161 @@
+---
+title: "Country disaggregation"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+source("00-packages.r")
+library (plotly)
+library (ggplot2)
+library (readxl)
+library (dplyr)
+library (ggmap)
+
+###############################################################################
+# 1. get data 
+###############################################################################
+
+CONN <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/conn.csv")
+save(CONN, file = "C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/CONN.r")
+load("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/CONN.R")
+DNS <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/dns.csv")
+DPD <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/dpd.csv")
+FILES <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/files.csv")
+GEOLOCATION <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/geolocation.csv")
+HOST <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/host.csv")
+HTTP <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/http.csv")
+SIP <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/sip.csv")
+SNMP <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/snmp.csv")
+SSL <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/ssl.csv")
+WEIRD <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/weird.csv")
+x509 <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/sip.csv")
+
+#####################
+### Preparation #####
+
+# change date to human readable
+CONN$date <- anytime(CONN$ts)
+# CONN$month <- month(CONN$date)
+# CONN$day <- day(CONN$ts)
+glimpse(CONN)
+
+CONN$duration <- as.numeric(as.character(CONN$duration))
+
+# unique IP addresses
+length(unique(CONN$id.orig_h))
+uniqueIP <- unique(CONN$id.orig_h)
+
+# Include in CONN: frequency of occurences per IP = ipFreq
+IPfreq <- as.data.frame(table(CONN$id.orig_h)) %>% rename(id.orig_h = Var1)
+CONN <- left_join(CONN, IPfreq, by="id.orig_h") %>% rename(ipFreq = Freq)
+# Include Geolocation to CONN
+GEOLOCATION <- rename(GEOLOCATION, id.orig_h = ip)
+CONN <- left_join(CONN, GEOLOCATION, by="id.orig_h") 
+# frequency of unique IP per location = locUniqueFreq
+
+# frequency of total IP per geolocation = locFreq
+locFreq <- CONN %>% group_by(location) %>% summarize(locFreq = n())
+CONN <- left_join(CONN, locFreq, by="location") 
+
+# 158 countries 
+countries <- unique(GEOLOCATION$location)
+length(countries)
+length(unique(GEOLOCATION$id.orig_h))
+locFreq <- as.data.frame(table(GEOLOCATION$location))
+
+######################
+### Outside Data #####
+######################
+
+
+
+load("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/resolutemean2018/CONN.OECD.r")
+
+
+
+########################
+##### Descriptives #####
+########################
+rm(CONN, DNS)
+
+# compute curation per week by country
+DUR.LOC <- CONN.OECD %>% select(date, duration, location) %>% 
+  filter(!is.na(duration)) %>%
+  mutate(week = week(date), year = year(date))
+
+DUR.LOC$week <- ifelse(DUR.LOC$week == 33 & DUR.LOC$year == 2014, 1, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 34 & DUR.LOC$year == 2014, 2, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 35 & DUR.LOC$year == 2014, 3, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 36 & DUR.LOC$year == 2014, 4, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 37 & DUR.LOC$year == 2014, 5, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 38 & DUR.LOC$year == 2014, 6, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 39 & DUR.LOC$year == 2014, 7, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 40 & DUR.LOC$year == 2014, 8, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 41 & DUR.LOC$year == 2014, 9, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 42 & DUR.LOC$year == 2014, 10, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 43 & DUR.LOC$year == 2014, 11, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 44 & DUR.LOC$year == 2014, 12, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 45 & DUR.LOC$year == 2014, 13, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 46 & DUR.LOC$year == 2014, 14, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 47 & DUR.LOC$year == 2014, 15, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 48 & DUR.LOC$year == 2014, 16, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 49 & DUR.LOC$year == 2014, 17, DUR.LOC$week) 
+DUR.LOC$week <- ifelse(DUR.LOC$week == 50 & DUR.LOC$year == 2014, 18, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 51 & DUR.LOC$year == 2014, 19, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 52 & DUR.LOC$year == 2014, 20, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 53 & DUR.LOC$year == 2014, 21, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 1 & DUR.LOC$year == 2015, 22, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 2 & DUR.LOC$year == 2015, 23, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 3 & DUR.LOC$year == 2015, 24, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 4 & DUR.LOC$year == 2015, 25, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 5 & DUR.LOC$year == 2015, 26, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 6 & DUR.LOC$year == 2015, 27, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 7 & DUR.LOC$year == 2015, 28, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 8 & DUR.LOC$year == 2015, 29, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 9 & DUR.LOC$year == 2015, 30, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 10 & DUR.LOC$year == 2015, 31, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 11 & DUR.LOC$year == 2015, 32, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 12 & DUR.LOC$year == 2015, 33, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 13 & DUR.LOC$year == 2015, 34, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 14 & DUR.LOC$year == 2015, 35, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 15 & DUR.LOC$year == 2015, 36, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 16 & DUR.LOC$year == 2015, 37, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 17 & DUR.LOC$year == 2015, 38, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 18 & DUR.LOC$year == 2015, 39, DUR.LOC$week)
+DUR.LOC$week <- as.numeric(DUR.LOC$week)
+
+# DUR.LOC <- DUR.LOC %>% group_by(location, week) %>%
+#   summarize(dur.p.week = sum(duration)) %>% 
+#   filter(location = one_of(c("China", "United States", "Korea", "Japan", "Russian Federation", "Brazil", "Germany", "Italy", "India", "Taiwan")))
+
+#DUR.LOC <- DUR.LOC %>% group_by(location, week) %>%
+  #summarize(dur.p.week = sum(duration)) %>% 
+  #DUR.LOC$dur.p.week <- as.numeric(DUR.LOC$dur.p.week/60)
+#DUR.LOC$dur.p.week <- round(DUR.LOC$dur.p.week)
+
+DUR.LOC$duration <- as.numeric(DUR.LOC$duration)
+
+DUR.LOC <- DUR.LOC %>% dplyr::group_by(location, week) %>%
+  dplyr::summarize(dur.p.week = sum(duration)) 
+
+DUR.LOC$dur.p.week <- round(DUR.LOC$dur.p.week)
+
+
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Duration per week, by country
+
+```{r}
+plot1 <- DUR.LOC %>% ggplot(aes(x=week, y=dur.p.week, fill=location)) + 
+  geom_area()
+ggplotly(plot1)
+```
+
+Column {data-width=350}
