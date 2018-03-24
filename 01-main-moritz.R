@@ -29,8 +29,9 @@ source("00-packages.r")
 # 1. get data 
 ###############################################################################
 
-CONN <- data.table::fread("./data/data/conn.csv")
-save(CONN, file = "./data/data/CONN.r")
+# CONN <- data.table::fread("./data/data/conn.csv")
+# save(CONN, file = "./data/data/CONN.r")
+load("./data/data/CONN.R")
 DNS <- data.table::fread("./data/data/dns.csv")
 DPD <- data.table::fread("./data/data/dpd.csv")
 FILES <- data.table::fread("./data/data/files.csv")
@@ -65,9 +66,16 @@ uniqueIP <- unique(CONN$id.orig_h)
 
 
 # frequency of IP
-CONN <- CONN %>% 
-  group_by(id.orig_h) %>%
-  mutate()
+IPfreq <- as.data.frame(table(CONN$id.orig_h)) %>% rename(id.orig_h = Var1)
+CONN <- left_join(CONN, IPfreq, by="id.orig_h")
+GEOLOCATION <- rename(GEOLOCATION, id.orig_h = ip)
+CONN <- left_join(CONN, GEOLOCATION, by="id.orig_h")
+
+# 158 countries 
+length(unique(GEOLOCATION$location))
+length(unique(GEOLOCATION$id.orig_h))
+locFreq <- as.data.frame(table(GEOLOCATION$location))
+
 
 # time duration from first to last request
 # time
