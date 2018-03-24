@@ -104,10 +104,22 @@ CONN %>% filter(Freq.y < 10000) %>%
 ggplot(aes(x = duration, y = Freq.y), na.rm = T)+
   geom_point()
 
+#country count
+CountryCount <- CONN %>% group_by(location) %>% summarise(count=n())
+CountryCount <- merge(CountryCount, locFreq, by = 'location')
+locFreq <- rename(locFreq, location = Var1)
+
+#scatterplot 
+
+CountryCount %>% 
+  ggplot(aes(x = location, y = count), na.rm = T)+
+  geom_point()
 
 
 
 
+
+load("./oecd-data/OECD.WDI.r")
 
 
 
