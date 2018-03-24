@@ -47,7 +47,7 @@ locFreq <- as_data_frame(table(GEO$location))
 #duration as numeric
 glimpse(CONN)
 names(CONN)
-CONN$duration <- as.numeric(CONN$duration)
+
 CONN$duration <- as.numeric(as.character(CONN$duration))
 summarise(CONN, mean = mean(duration, na.rm = T), min = min(duration, na.rm = T),
           max = max(duration, na.rm = T))
