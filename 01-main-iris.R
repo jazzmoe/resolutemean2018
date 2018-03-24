@@ -62,3 +62,7 @@ CONN$durationnum <- as.numeric(CONN$duration)
 summary(CONN$durationnum)
 
 CountryCount <- CONNGEOLOCATION %>% dplyr::group_by(location) %>% summarize(count=n())
+
+try(setwd("C:/Users/MsUser/Documents/GitHub/resolutemean2018"), silent = TRUE)
+
+load("./oecd-data/OECD.WDI.r")
