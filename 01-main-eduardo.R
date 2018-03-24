@@ -14,24 +14,13 @@ rm(diamonds2)
 getwd()
 setwd("C:/Users/Eduado Acosta/Documents/datafest 18/data/datafest2018_data_and_documentation/data")
 
-HTTP <- data.table::fread("http.csv")
-SNMP <- data.table::fread("snmp.csv")
-
-FILES <- data.table::fread("files.csv")
 GEOLOCATION <- data.table::fread("geolocation.csv")
-HOST <- data.table::fread("host.csv")
 CONN <- data.table::fread("conn.csv")
-CONN <- CONN %>% 
-  mutate(date = as_datetime(ts))
-
-DNS <- data.table::fread("dns.csv")
-DPD <- data.table::fread("dpd.csv")
 
 # hist of durations
 conn$duration2 <- as.numeric(conn$duration)
 ggplot(conn, aes(duration2)) +
   geom_histogram(binwidth = 30)
-
 conn <- order(conn$duration2)
 summary(conn$duration2)
 
@@ -39,23 +28,25 @@ summary(conn$duration2)
 IPsuspicious <- conn[conn$id.orig_h=="213.108.73.187"]
 View(IPsuspicious)
 
+###
 countries <- unique(GEOLOCATION$location)
 length(countries)
 length(unique(GEOLOCATION$id.orig_h))
 locFreq <- as.data.frame(table(GEOLOCATION$location))
+CONN <- rename(CONN, replace = c("id.orig_h" = "ip"))
+CONN <- merge(CONN, GEOLOCATION, by=c("ip"))
 
+longduration <- subset(CONN, duration > 600 )
 
+longduration$formatteddate <- anytime(longduration$ts)
+longduration$formatteddate <- as.Date(longduration$formatteddate)
 
-#heatmap
+longduration$datecount <- as.character(longduration$formatteddate)
 
-CONN$formatteddate <- anytime(CONN$ts)
-CONN$formatteddate <- as.Date(CONN$formatteddate)
+longduration$totalconn %>% group_by(longduration$formatteddate) %>% summarise(count())
+  dplyr::(longduration$datecount)
 
-CONN$datecount <- as.character(CONN$formatteddate)
-
-CONN$totalconn <- count(CONN$datecount)
-
-connections$year <- substr(connections$formatteddate,1,4)
+longduration$year <- substr(longduration$formatteddate,1,4)
 
 connections$yearmonth <- as.yearmon(connections$formatteddate)
 connections$yearmonthf <- factor(connections$yearmonth)
