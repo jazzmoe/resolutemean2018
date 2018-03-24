@@ -63,8 +63,24 @@ CONN <- select(CONN, -Freq.x)
 glimpse(CONN)
 
 # 158 countries 
-length(unique(GEOLOCATION$location))
+countries <- unique(GEOLOCATION$location)
+length(countries)
 length(unique(GEOLOCATION$id.orig_h))
 locFreq <- as.data.frame(table(GEOLOCATION$location))
 
-# duration
+######################
+### Outside Data #####
+######################
+
+temp <- read_csv("./oecd-data/WDIData.csv")
+names(temp)[1] <- "Country"
+OECD.WDI <- temp[temp$Country %in% countries,]
+OECD.WDI <- OECD.WDI[]
+rm(temp)
+
+
+######################
+### Descriptives #####
+######################
+
+
