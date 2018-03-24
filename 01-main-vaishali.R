@@ -24,6 +24,7 @@ try(setwd("includeyourfolder"), silent = TRUE)
 source("00-packages.r")
 #source("functions.r")
 library(outliers)
+library(magrittr)
 
 options(scipen=999)
 
@@ -51,11 +52,27 @@ conngeo <- merge(conn, geolocation, by = "id.orig_h")
 ### Preparation #####
 #####################
 
-### 
+#########################Outlier analysis#########################
+library(outliers)
+
+countrycount <- conngeo %>% dplyr::group_by(location) %>% summarize(count=n())
+
+##Korea heat map by IP addresses
+korea <- conngeo %>% dplyr::filter(location=="Korea")
+
+library(ggmap)
+for (i in 1:nrow(korea)) {
+  latlon = geocode(korea[i,1])
+  korea$lon[i] = as.numeric(latlon[1])
+  korea$lat[i] = as.numeric(latlon[2])
+}
+
+bbox <- make_bbox(korea$lon,korea$lat,f=1)
+b <- get_map(bbox)
+
+ggmap(b) + geom_point(data=korea, aes(lon, lat), size=2, alpha=0.7)
 
 #Calendar heat map
-
-library(ggplot2)
 library(plyr)
 library(scales)
 library(zoo)
@@ -78,6 +95,8 @@ conngeo$week <- as.numeric(conngeo$week)
 conngeo$day <- weekdays(as.Date(conngeo$formatteddate))
 
 conngeo <- ddply(conngeo,.(yearmonthf), transform, monthweek=1+week-min(week))
+
+
 
 conn1 <- conngeo[, c("year", "yearmonthf", "monthf", "week", "monthweek", "day", "orig_ip_bytes")]
 
