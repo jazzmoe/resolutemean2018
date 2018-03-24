@@ -98,10 +98,20 @@ length(unique(GEOLOCATION$location))
 length(unique(GEOLOCATION$id.orig_h))
 locFreq <- as.data.frame(table(GEOLOCATION$location))
 
-#scatterplot - duration and frequency of IP address# 
+#1. scatterplot - duration and frequency of IP address# 
 glimpse(CONN)
+CONN %>% ggplot(aes(x = duration, y = Freq.y), na.rm = T)+
+  geom_point()
+
+#2. scatterplot - duration and frequency of IP address, w/o Germany# 
+
 CONN %>% filter(Freq.y < 10000) %>%  
-ggplot(aes(x = duration, y = Freq.y), na.rm = T)+
+  ggplot(aes(x = duration, y = Freq.y), na.rm = T)+
+  geom_point()
+
+#3. scatterplot - aggregated duration and IP address#
+
+SUMDUR %>% ggplot(aes(x = sum(duration), y = ), na.rm = T)+
   geom_point()
 
 #country count
@@ -109,12 +119,12 @@ CountryCount <- CONN %>% group_by(location) %>% summarise(count=n())
 CountryCount <- merge(CountryCount, locFreq, by = 'location')
 locFreq <- rename(locFreq, location = Var1)
 
-#scatterplot - # 
-SUMDUR <- CONN %>% select(ts, id.orig_h, duration) %>% 
-          filter(!is.na(duration)) %>% 
+#sum of the durations # 
+SUMDUR <- CONN %>% select(ts, id.orig_h, duration) %>%
           group_by(id.orig_h) %>% 
           summarise(sum(duration))
 
+SUMDUR <- full_join(SUMDUR, IPfreq, by = 'id.orig_h', !)
 SUMDUR
 
           
