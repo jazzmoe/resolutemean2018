@@ -62,6 +62,9 @@ CONN$durationnum <- as.numeric(CONN$duration)
 summary(CONN$durationnum)
 
 CountryCount <- CONNGEOLOCATION %>% dplyr::group_by(location) %>% summarize(count=n())
+CountryCountWithoutGermany <- CountryCount[ which (CountryCount$count <= 40000), ]
+plot (CountryCountWithoutGermany$Freq, CountryCountWithoutGermany$count)
+summary(lm(count ~ Freq, data=CountryCountWithoutGermany))
 
 try(setwd("C:/Users/MsUser/Documents/GitHub/resolutemean2018"), silent = TRUE)
 
