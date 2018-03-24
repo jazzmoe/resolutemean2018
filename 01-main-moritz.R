@@ -86,10 +86,38 @@ OECD.WDI <- OECD.WDI[OECD.WDI$Indicator %in% OECD.vars,] %>%
   spread(key = "Indicator", value = "Value")
 rm(temp)
 
+# selecting: Secure Server/1 Million IT.NET.SECR.P6 -> secureServer.per.million
+# GDP per capita (current US$)	NY.GDP.PCAP.CD -> gdp.per.capita
+# Fixed broadband subscriptions (per 100 people)	IT.NET.BBND.P2 -> Broadband.per.100
+# Electricity production from hydroelectric sources (% of total) EG.ELC.HYRO.ZS -> hydro.electricity.pct
+# Current education expenditure, total (% of total expenditure in public institutions) SE.XPD.CTOT.ZS -> ecucation.spending
+OECD.WDI <- OECD.WDI %>% rename(
+  secureServer.per.million = IT.NET.SECR.P6,
+  gdp.per.capita = NY.GDP.PCAP.CD,
+  broadband.per.100 = IT.NET.BBND.P2,
+  hydro.electricity.pct = EG.ELC.HYRO.ZS,
+  education.spending = SE.XPD.CTOT.ZS) %>%
+  select(one_of(
+    c("Country", 
+      "Year", 
+      "secureServer.per.million", 
+      "gdp.per.capita", 
+      "broadband.per.100", 
+      "hydro.electricity.pct", 
+      "education.spending" )))
+  
 save(OECD.WDI, file = "./oecd-data/OECD.WDI.r")
+
 
 ######################
 ### Descriptives #####
 ######################
 
-#abd,,
+# 
+
+
+######################
+###### Graphics ######
+######################
+
+# World Map
