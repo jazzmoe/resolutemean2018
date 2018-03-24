@@ -20,10 +20,8 @@ rm(list=ls())
 try(setwd("C:\Users\Moritz\Desktop\resolutemean2018"), silent = TRUE)
 try(setwd("includeyourfolder"), silent = TRUE)
 
-
 source("00-packages.r")
 #source("functions.r")
-
 
 ###############################################################################
 # 1. get data 
@@ -44,26 +42,17 @@ SSL <- data.table::fread("./data/data/ssl.csv")
 WEIRD <- data.table::fread("./data/data/weird.csv")
 x509 <- data.table::fread("./data/data/sip.csv")
 
-# dataFiles <- c("dns", "dpd", "files", "geolocation", "host", "http", "sip", "snmp", "ssl", "weird", "x509")
-# temp = list.files(pattern="*.csv")
-# myfiles = lapply(temp, read.delim)
-
-# for (i in 1:end(dataFiles)) {
-#   tloop <- paste("./data/data/", i, ".csv")
-#   i <-  data.table::fread(tloop)
-#   rm(tloop)
-# }
-
 #####################
 ### Preparation #####
 #####################
 
+# change date to human readable
+CONN$date <- anytime(CONN$ts)
+glimpse(CONN)
+
 # unique IP addresses
 length(unique(CONN$id.orig_h))
 uniqueIP <- unique(CONN$id.orig_h)
-
-# date
-
 
 # frequency of IP
 IPfreq <- as.data.frame(table(CONN$id.orig_h)) %>% rename(id.orig_h = Var1)
@@ -76,6 +65,4 @@ length(unique(GEOLOCATION$location))
 length(unique(GEOLOCATION$id.orig_h))
 locFreq <- as.data.frame(table(GEOLOCATION$location))
 
-
-# time duration from first to last request
-# time
+# duration
