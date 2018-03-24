@@ -1,0 +1,50 @@
+Annual freshwater withdrawals, agriculture (% of total freshwater withdrawal) ER.H2O.FWAG.ZS
+Annual freshwater withdrawals, domestic (% of total freshwater withdrawal) ER.H2O.FWDM.ZS
+Annual freshwater withdrawals, industry (% of total freshwater withdrawal) ER.H2O.FWIN.ZS
+Annual freshwater withdrawals, total (% of internal resources) ER.H2O.FWTL.ZS
+Computer, communications and other services (% of commercial service imports) TX.VAL.OTHR.ZS.WT
+Computer, communications and other services (% of commercial service exports) TM.VAL.OTHR.ZS.WT
+Communications, computer, etc. (% of service exports, BoP) BX.GSR.CMCP.ZS
+Communications, computer, etc. (% of service imports, BoP) BM.GSR.CMCP.ZS
+Cost to import (US$ per container) IC.IMP.COST.CD
+Current education expenditure, total (% of total expenditure in public institutions) SE.XPD.CTOT.ZS
+Electric power consumption (kWh per capita) EG.USE.ELEC.KH.PC
+Electricity production from hydroelectric sources (% of total) EG.ELC.HYRO.ZS
+Firms experiencing losses due to theft and vandalism (% of firms) IC.FRM.THEV.ZS
+Fixed broadband subscriptions	IT.NET.BBND
+Fixed broadband subscriptions (per 100 people)	IT.NET.BBND.P2
+GDP per capita (constant 2010 US$)	NY.GDP.PCAP.KD
+GDP per capita (current US$)	NY.GDP.PCAP.CD
+GINI index (World Bank estimate)	SI.POV.GINI
+High-technology exports (% of manufactured exports)	TX.VAL.TECH.MF.ZS
+ICT goods exports (% of total goods exports)	TX.VAL.ICTG.ZS.UN
+ICT goods imports (% total goods imports)	TM.VAL.ICTG.ZS.UN
+ICT service exports (% of service exports, BoP)	BX.GSR.CCIS.ZS
+Renewable energy consumption (% of total final energy consumption)	EG.FEC.RNEW.ZS
+Renewable internal freshwater resources per capita (cubic meters)	ER.H2O.INTR.PC
+Renewable internal freshwater resources, total (billion cubic meters)	ER.H2O.INTR.K3
+Scientific and technical journal articles	IP.JRN.ARTC.SC
+Secure Internet servers-IT.NET.SECR
+Secure Internet servers (per 1 million people)-IT.NET.SECR.P6
+Technicians in R&D (per million people)	SP.POP.TECH.RD.P6
+ICT service exports (BoP, current US$)	BX.GSR.CCIS.CD
+Improved water source (% of population with access)	SH.H2O.SAFE.ZS
+Improved water source, rural (% of rural population with access)	SH.H2O.SAFE.RU.ZS
+Improved water source, urban (% of urban population with access)	SH.H2O.SAFE.UR.ZS
+Investment in ICT with private participation (current US$)	IE.PPI.ICTI.CD
+Military expenditure (% of GDP)	MS.MIL.XPND.GD.ZS
+Military expenditure (% of central government expenditure)	MS.MIL.XPND.ZS
+New businesses registered (number)	IC.BUS.NREG
+People using at least basic drinking water services (% of population)	SH.H2O.BASW.ZS
+People using at least basic drinking water services, rural (% of rural population)	SH.H2O.BASW.RU.ZS
+People using at least basic drinking water services, urban (% of urban population)	SH.H2O.BASW.UR.ZS
+
+
+
+
+
+
+
+
+
+
