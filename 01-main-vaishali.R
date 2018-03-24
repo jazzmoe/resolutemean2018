@@ -31,7 +31,12 @@ options(scipen=999)
 # 1. get data 
 ###############################################################################
 
-# conn <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/conn.csv")
+conn <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/conn.csv")
+geolocation <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/geolocation.csv")
+
+geolocation$id.orig_h <- geolocation$ip
+conngeo <- merge(conn, geolocation, by = "id.orig_h")
+
 # headconn <- head(conn,50000)
 # save(headconn, file = "Headconn.RData")
 
@@ -56,25 +61,25 @@ library(scales)
 library(zoo)
 library(anytime)
 
-conn$formatteddate <- anytime(conn$ts)
+conngeo$formatteddate <- anytime(conngeo$ts)
 
 
 
-conn$formatteddate <- as.Date(conn$formatteddate)
-conn$year <- substr(conn$formatteddate,1,4)
+conngeo$formatteddate <- as.Date(conngeo$formatteddate)
+conngeo$year <- substr(conngeo$formatteddate,1,4)
 
-conn$yearmonth <- as.yearmon(conn$formatteddate)
-conn$yearmonthf <- factor(conn$yearmonth)
-conn$monthf <- months.Date(conn$formatteddate)
-conn$week <- strftime(conn$formatteddate, format = "%V")
+conngeo$yearmonth <- as.yearmon(conngeo$formatteddate)
+conngeo$yearmonthf <- factor(conngeo$yearmonth)
+conngeo$monthf <- months.Date(conngeo$formatteddate)
+conngeo$week <- strftime(conngeo$formatteddate, format = "%V")
 
-conn$week <- as.numeric(conn$week)
+conngeo$week <- as.numeric(conngeo$week)
 
-conn$day <- weekdays(as.Date(conn$formatteddate))
+conngeo$day <- weekdays(as.Date(conngeo$formatteddate))
 
-conn <- ddply(conn,.(yearmonthf), transform, monthweek=1+week-min(week))
+conngeo <- ddply(conngeo,.(yearmonthf), transform, monthweek=1+week-min(week))
 
-conn1 <- conn[, c("year", "yearmonthf", "monthf", "week", "monthweek", "day", "orig_ip_bytes")]
+conn1 <- conngeo[, c("year", "yearmonthf", "monthf", "week", "monthweek", "day", "orig_ip_bytes")]
 
 head(conn1)
 
