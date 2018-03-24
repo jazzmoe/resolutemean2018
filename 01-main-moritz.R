@@ -29,8 +29,8 @@ source("00-packages.r")
 # 1. get data 
 ###############################################################################
 
-# CONN <- data.table::fread("./data/data/conn.csv")
-save(CONN, file = "CONN.r")
+CONN <- data.table::fread("./data/data/conn.csv")
+save(CONN, file = "./data/data/CONN.r")
 DNS <- data.table::fread("./data/data/dns.csv")
 DPD <- data.table::fread("./data/data/dpd.csv")
 FILES <- data.table::fread("./data/data/files.csv")
@@ -62,17 +62,12 @@ length(unique(CONN$id.orig_h))
 uniqueIP <- unique(CONN$id.orig_h)
 
 # date
-CONN <- CONN %>% 
-  mutate(date = as_datetime(ts),
-  mutate(date = as_datetime(ts),
-  mutate(date = as_datetime(ts),
-  mutate(date = as_datetime(ts),
-  mutate(date = as_datetime(ts),
-  mutate(date = as_datetime(ts),
-    
-         )
+
 
 # frequency of IP
+CONN <- CONN %>% 
+  group_by(id.orig_h) %>%
+  mutate()
 
 # time duration from first to last request
-# 'time'
+# time
