@@ -18,7 +18,7 @@ rm(list=ls())
 
 ## Setting working directory
 try(setwd("C:/Users/Moritz/OneDrive/data-fest2018"), silent = TRUE)
-try(setwd("/Users/hannahmiles/Documents/GitHub/data-fest2018"), silent = TRUE)
+try(setwd("/Users/hannahmiles/Documents/GitHub/resolutemean2018"), silent = TRUE)
 
 
 source("00-packages.r")
@@ -29,16 +29,22 @@ source("00-packages.r")
 # 1. get data 
 ###############################################################################
 
-HTTP <- data.table::fread("./data/data/http.csv")
-SIP <- data.table::fread("./data/data/sip.csv")
-SNMP <- data.table::fread("./data/data/snmp.csv")
-X509 <- data.table::fread("./data/data/x509.csv")
-WEIRD <- data.table::fread("./data/data/weird.csv")
-HOST <- data.table::fread("./data/data/host.csv")
+#HTTP <- data.table::fread("./data/data/http.csv")
+#SIP <- data.table::fread("./data/data/sip.csv")
+#SNMP <- data.table::fread("./data/data/snmp.csv")
+#X509 <- data.table::fread("./data/data/x509.csv")
+#WEIRD <- data.table::fread("./data/data/weird.csv")
+#HOST <- data.table::fread("./data/data/host.csv")
 CONN <- data.table::fread("./data/data/conn.csv")
 GEO <-  data.table::fread("./data/data/geolocation.csv")
 FILES <-  data.table::fread("./data/data/files.csv")
 
+#Info geolocation
+unique(GEO$location)
+locFreq <- as_data_frame(table(GEO$location))
+
+
+#duration as numeric
 glimpse(CONN)
 names(CONN)
 CONN$duration <- as.numeric(CONN$duration)
@@ -79,10 +85,12 @@ hist(log(temp$duration))
 #scatterplot - duration and frequency of IP address# 
 
 
-unique(GEO$location)
-locFreq <- as_data_frame(table(GEO$location))
 
-glimpse(CONN)
+
+
+
+
+
 
 
 # DataMain <- head(DataMain,50000)
