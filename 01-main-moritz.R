@@ -78,7 +78,7 @@ OECD.WDI <- temp[temp$Country %in% countries,]
 OECD.vars <- as.character(c("ER.H2O.FWAG.ZS", "ER.H2O.FWDM.ZS", "ER.H2O.FWIN.ZS", "ER.H2O.FWTL.ZS", "TX.VAL.OTHR.ZS.WT", "TM.VAL.OTHR.ZS.WT", "BX.GSR.CMCP.ZS", "BM.GSR.CMCP.ZS", "IC.IMP.COST.CD",
 "SE.XPD.CTOT.ZS", "EG.USE.ELEC.KH.PC", "EG.ELC.HYRO.ZS", "IC.FRM.THEV.ZS", "IT.NET.BBND", "IT.NET.BBND.P2", "NY.GDP.PCAP.KD", "NY.GDP.PCAP.CD", "SI.POV.GINI", "TX.VAL.TECH.MF.ZS",
 "TX.VAL.ICTG.ZS.UN", "TM.VAL.ICTG.ZS.UN", "EG.FEC.RNEW.ZS", "ER.H2O.INTR.PC", "ER.H2O.INTR.K3", "IP.JRN.ARTC.SC", "IT.NET.SECR", "IT.NET.SECR.P6", "SP.POP.TECH.RD.P6", "BX.GSR.CCIS.CD", "SH.H2O.SAFE.ZS",
-"SH.H2O.SAFE.RU.ZS", "SH.H2O.SAFE.UR.ZS", "IE.PPI.ICTI.CD", "MS.MIL.XPND.GD.ZS", "MS.MIL.XPND.ZS", "IC.BUS.NREG", "SH.H2O.BASW.ZS", "SH.H2O.BASW.RU.ZS", "SH.H2O.BASW.UR.ZS"))
+"SH.H2O.SAFE.RU.ZS", "SH.H2O.SAFE.UR.ZS", "IE.PPI.ICTI.CD", "MS.MIL.XPND.GD.ZS", "MS.MIL.XPND.ZS", "IC.BUS.NREG", "SH.H2O.BASW.ZS", "SH.H2O.BASW.RU.ZS", "SH.H2O.BASW.UR.ZS", "SP.POP.TOTL"))
 
 OECD.WDI <- OECD.WDI[OECD.WDI$Indicator %in% OECD.vars,] %>% 
   select(one_of(c("Country", "Indicator", "2014"))) %>%
@@ -96,7 +96,8 @@ OECD.WDI <- OECD.WDI %>% rename(
   gdp.per.capita = NY.GDP.PCAP.CD,
   broadband.per.100 = IT.NET.BBND.P2,
   hydro.electricity.pct = EG.ELC.HYRO.ZS,
-  education.spending = SE.XPD.CTOT.ZS) %>%
+  education.spending = SE.XPD.CTOT.ZS,
+  population = SP.POP.TOTL) %>%
   select(one_of(
     c("Country", 
       "Year", 
@@ -104,10 +105,12 @@ OECD.WDI <- OECD.WDI %>% rename(
       "gdp.per.capita", 
       "broadband.per.100", 
       "hydro.electricity.pct", 
-      "education.spending" )))
+      "education.spending",
+      "population")))
   
 save(OECD.WDI, file = "./oecd-data/OECD.WDI.r")
-
+load("./oecd-data/OECD.WDI.r")
+OECD.WDI$secureServer.per.million <- round(OECD.WDI$secureServer.per.million)
 
 ######################
 ### Descriptives #####
