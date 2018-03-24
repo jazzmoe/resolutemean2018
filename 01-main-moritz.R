@@ -80,7 +80,10 @@ OECD.vars <- as.character(c("ER.H2O.FWAG.ZS", "ER.H2O.FWDM.ZS", "ER.H2O.FWIN.ZS"
 "TX.VAL.ICTG.ZS.UN", "TM.VAL.ICTG.ZS.UN", "EG.FEC.RNEW.ZS", "ER.H2O.INTR.PC", "ER.H2O.INTR.K3", "IP.JRN.ARTC.SC", "IT.NET.SECR", "IT.NET.SECR.P6", "SP.POP.TECH.RD.P6", "BX.GSR.CCIS.CD", "SH.H2O.SAFE.ZS",
 "SH.H2O.SAFE.RU.ZS", "SH.H2O.SAFE.UR.ZS", "IE.PPI.ICTI.CD", "MS.MIL.XPND.GD.ZS", "MS.MIL.XPND.ZS", "IC.BUS.NREG", "SH.H2O.BASW.ZS", "SH.H2O.BASW.RU.ZS", "SH.H2O.BASW.UR.ZS"))
 
-OECD.WDI <- OECD.WDI[OECD.WDI$Indicator %in% OECD.vars,]
+OECD.WDI <- OECD.WDI[OECD.WDI$Indicator %in% OECD.vars,] %>% 
+  select(one_of(c("Country", "Indicator", "2014"))) %>%
+  gather( `2014`, key = "year", value = "Value") %>%
+  spread(key = "Indicator", value = "Value")
 rm(temp)
 
 save(OECD.WDI, file = "./oecd-data/OECD.WDI.r")
@@ -89,4 +92,4 @@ save(OECD.WDI, file = "./oecd-data/OECD.WDI.r")
 ### Descriptives #####
 ######################
 
-#abd
+#abd,
