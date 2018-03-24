@@ -62,6 +62,22 @@ CONN$durationnum <- as.numeric(CONN$duration)
 summary(CONN$durationnum)
 
 CountryCount <- CONNGEOLOCATION %>% dplyr::group_by(location) %>% summarize(count=n())
+CountryCountWithoutGermany <- CountryCount[ which (CountryCount$count <= 40000), ]
+plot (CountryCountWithoutGermany$Freq, CountryCountWithoutGermany$count)
+summary(lm(count ~ Freq, data=CountryCountWithoutGermany))
+
+SUMDUR <- CONN %>% select(ts, id.orig_h, durationnum) %>% 
+  filter(!is.na(durationnum)) %>% 
+  group_by(id.orig_h) %>% 
+  summarise(sum(durationnum))
+
+SumDurFreq <- merge(SUMDUR, IPfreq, by ="id.orig_h")
+plot (SumDurFreq$`sum(durationnum)`, SumDurFreq$Freq)
+SumDurFreqNoOutliers <- SumDurFreq [ which (SumDurFreq <= 100000), ]
+plot (SumDurFreqNoOutliers$`sum(durationnum)`, SumDurFreqNoOutliers$Freq)
+
+SumDurFreqLoc <- merge(SumDurFreq, GEOLOCATION, by="id.orig_h")
+SumDurFreqLoc$ip <- NULL
 
 try(setwd("C:/Users/MsUser/Documents/GitHub/resolutemean2018"), silent = TRUE)
 
