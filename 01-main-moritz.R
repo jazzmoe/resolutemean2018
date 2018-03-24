@@ -48,17 +48,25 @@ x509 <- data.table::fread("./data/data/sip.csv")
 
 # change date to human readable
 CONN$date <- anytime(CONN$ts)
+# CONN$month <- month(CONN$date)
+# CONN$day <- day(CONN$ts)
 glimpse(CONN)
 
 # unique IP addresses
 length(unique(CONN$id.orig_h))
 uniqueIP <- unique(CONN$id.orig_h)
 
-# frequency of IP
+# Include in CONN: frequency of occurences per IP = ipFreq
 IPfreq <- as.data.frame(table(CONN$id.orig_h)) %>% rename(id.orig_h = Var1)
-CONN <- left_join(CONN, IPfreq, by="id.orig_h")
+CONN <- left_join(CONN, IPfreq, by="id.orig_h") %>% rename(ipFreq = Freq)
+# Include Geolocation to CONN
 GEOLOCATION <- rename(GEOLOCATION, id.orig_h = ip)
-CONN <- left_join(CONN, GEOLOCATION, by="id.orig_h")
+CONN <- left_join(CONN, GEOLOCATION, by="id.orig_h") 
+# frequency of unique IP per location = locFreq
+
+# frequency of total IP per geolocation = locFreq
+IP.loc <- CONN %>% group_by() %>%
+  as.data.frame(table(CONN$id.orig_h)) %>% rename(id.orig_h = Var1)
 
 # 158 countries 
 countries <- unique(GEOLOCATION$location)
@@ -111,15 +119,79 @@ OECD.WDI <- OECD.WDI %>% rename(
 save(OECD.WDI, file = "./oecd-data/OECD.WDI.r")
 load("./oecd-data/OECD.WDI.r")
 OECD.WDI$secureServer.per.million <- round(OECD.WDI$secureServer.per.million)
+OECD.WDI <- OECD.WDI %>% rename(location = Country)
 
-### CONN without location
+### CONN without missing locations
 CONN.loc <- CONN %>% filter(!is.na(CONN$location))
 
-######################
-### Descriptives #####
-######################
+# merge OECD and CONN data
+CONN.OECD <- left_join(CONN.loc, OECD.WDI, key = location)
 
-# 
+########################
+##### Descriptives #####
+########################
+
+# summarize duration by IP
+CONN.DUR.SUM.IP <- CONN.OECD %>% group_by(id.orig_h) %>%
+  select() %>%
+  summarise(duration)
+  
+# summarize duration by location
+CONN.DUR.SUM.LOCATION <- CONN.OECD
+
+
+#1. scatterplot - duration and frequency of IP address# 
+plot1 <- CONN %>% ggplot(aes(x = duration, y = Freq.y), na.rm = T)+
+  geom_point()
+
+#2. scatterplot - duration and frequency of IP address, w/o Germany# 
+
+plot2 <- CONN %>% filter(Freq.y < 10000) %>%  
+  ggplot(aes(x = duration, y = Freq.y), na.rm = T)+
+  geom_point()
+
+#3. scatterplot - aggregated duration and IP address#
+
+plot3 <- SUMDUR %>% ggplot(aes(x = sumdur, y = Freq), na.rm = T)+
+  geom_point()
+
+#4. scatterplot - aggregated duration and IP address, with colours etc.#
+
+plot4 <- SUMDUR %>% ggplot(aes(x = sumdur, y = Freq), na.rm = T)+
+  geom_point()
+
+
+#country count
+CountryCount <- CONN %>% group_by(location) %>% summarise(count=n())
+CountryCount <- merge(CountryCount, locFreq, by = 'location')
+locFreq <- rename(locFreq, location = Var1)
+
+#sum of the durations # 
+SUMDUR <- CONN %>% select(ts, id.orig_h, duration) %>%
+  filter(!is.na(duration)) %>% 
+  group_by(id.orig_h) %>% 
+  summarise(sumdur = sum(duration))
+
+sum(is.na(SUMDUR$sumdur))
+sum(is.na(CONN$duration))
+
+SUMDUR <- merge(SUMDUR, IPfreq, by = 'id.orig_h')
+
+#add country data to SUMDUR# 
+SUMDUR <- merge(SUMDUR, GEOLOCATION, by = 'id.orig_h')
+
+
+
+
+
+
+CONN %>% filter(Freq.y < 10000) %>%  
+  ggplot(aes(x = duration, y = Freq.y), na.rm = T)+
+  geom_point()
+
+
+
+
 
 
 ######################
