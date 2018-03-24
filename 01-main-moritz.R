@@ -52,6 +52,8 @@ CONN$date <- anytime(CONN$ts)
 # CONN$day <- day(CONN$ts)
 glimpse(CONN)
 
+CONN$duration <- as.numeric(as.character(CONN$duration))
+
 # unique IP addresses
 length(unique(CONN$id.orig_h))
 uniqueIP <- unique(CONN$id.orig_h)
@@ -131,6 +133,51 @@ save(CONN.OECD, file = "./oecd-data/CONN.OECD.r")
 ########################
 ##### Descriptives #####
 ########################
+rm(CONN, DNS)
+# 
+DUR.LOC <- CONN.OECD %>% select(date, duration, location) %>% 
+  filter(!is.na(duration)) %>%
+  mutate(week = week(date), year = year(date)) %>%
+  group_by()
+  summarize()
+  r
+         
+# DUR.LOC$year <- as.numeric(DUR.LOC$year) 
+
+
+# DUR.LOC <- if(DUR.LOC$year == 2014) {
+#     mutate(DUR.LOC, exp.week = week-32) 
+# } else {
+#     replace(DUR.LOC, exp.week, week+21)
+#   }
+#   
+  
+         
+  
+
+
+
+conngeo$formatteddate <- anytime(conngeo$ts)
+
+
+
+conngeo$formatteddate <- as.Date(conngeo$formatteddate)
+conngeo$year <- substr(conngeo$formatteddate,1,4)
+
+conngeo$yearmonth <- as.yearmon(conngeo$formatteddate)
+conngeo$yearmonthf <- factor(conngeo$yearmonth)
+conngeo$monthf <- months.Date(conngeo$formatteddate)
+conngeo$week <- strftime(conngeo$formatteddate, format = "%V")
+
+conngeo$week <- as.numeric(conngeo$week)
+
+conngeo$day <- weekdays(as.Date(conngeo$formatteddate))
+
+
+
+
+
+
 
 # summarize duration by IP
 CONN.DUR.SUM.IP <- CONN.OECD %>% select(date, id.orig_h, duration) %>%
