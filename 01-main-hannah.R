@@ -109,10 +109,19 @@ CountryCount <- CONN %>% group_by(location) %>% summarise(count=n())
 CountryCount <- merge(CountryCount, locFreq, by = 'location')
 locFreq <- rename(locFreq, location = Var1)
 
-#scatterplot 
+#scatterplot - # 
+SUMDUR <- CONN %>% select(ts, id.orig_h, duration) %>% 
+          filter(!is.na(duration)) %>% 
+          group_by(id.orig_h) %>% 
+          summarise(sum(duration))
 
-CountryCount %>% 
-  ggplot(aes(x = location, y = count), na.rm = T)+
+SUMDUR
+
+          
+
+
+CONN %>% filter(Freq.y < 10000) %>%  
+  ggplot(aes(x = duration, y = Freq.y), na.rm = T)+
   geom_point()
 
 
