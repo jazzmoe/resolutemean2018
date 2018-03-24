@@ -52,8 +52,19 @@ conngeo <- merge(conn, geolocation, by = "id.orig_h")
 ### Preparation #####
 #####################
 
-#########################Outlier analysis#########################
+##########################Outlier analysis#######################################
 library(outliers)
+conngeo$duration <- as.numeric(conngeo$duration)
+
+#Variables with an outlier
+chisq.out.test(conngeo$duration)
+chisq.out.test(conngeo$orig_ip_bytes)
+chisq.out.test(conngeo$resp_ip_bytes)
+
+
+################################################################################
+
+
 
 countrycount <- conngeo %>% dplyr::group_by(location) %>% summarize(count=n())
 
