@@ -160,45 +160,14 @@ P <- AT.PER.DAY %>% ggplot(aes(monthweek, weekday, fill = requestFreq)) +
   geom_tile(colour = "white") + facet_grid(year~monthf) + scale_fill_gradient(low="yellow", high="red") + xlab("Week of Month") + ylab("")
 P
 
-
-# plot1 <- AT.PER.DAY %>% ggplot(aes(monthweek, weekday, fill = requestFreq)) + 
-#   geom_tile(colour = "white") + 
-#   facet_grid(year~monthf) + 
-#   scale_fill_gradient(low="red", high="green") +
-#   labs(x="Week of Month",
-#        y="",
-#        title = "Time-Series Calendar Heatmap", 
-#        subtitle="Conn data", fill = "orig_ip_bytes")
-# 
-# plot1
-
-
-# c("Russian Federation", "China", "United States", "Netherlands", "Brazil")
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 rm(CONN, DNS)
 
 load("./oecd-data/CONN.OECD.r")
 
-# compute curation per week by country
-DUR.LOC <- CONN.OECD %>% select(date, duration, location) %>% 
-  filter(!is.na(duration)) %>%
+
+# compute duration per week by country
+DUR.LOC <- CONN.OECD %>% select(date, location) %>%
+  filter(location = "Russian Federation", "China", "United States", "Netherlands", "Brazil")) %>%
   mutate(week = week(date), year = year(date))
 
 DUR.LOC$week <- ifelse(DUR.LOC$week == 33 & DUR.LOC$year == 2014, 1, DUR.LOC$week)
