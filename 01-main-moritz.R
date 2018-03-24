@@ -62,11 +62,11 @@ CONN <- left_join(CONN, IPfreq, by="id.orig_h") %>% rename(ipFreq = Freq)
 # Include Geolocation to CONN
 GEOLOCATION <- rename(GEOLOCATION, id.orig_h = ip)
 CONN <- left_join(CONN, GEOLOCATION, by="id.orig_h") 
-# frequency of unique IP per location = locFreq
+# frequency of unique IP per location = locUniqueFreq
 
 # frequency of total IP per geolocation = locFreq
-IP.loc <- CONN %>% group_by() %>%
-  as.data.frame(table(CONN$id.orig_h)) %>% rename(id.orig_h = Var1)
+locFreq <- CONN %>% group_by(location) %>% summarize(locFreq = n())
+CONN <- left_join(CONN, locFreq, by="location") 
 
 # 158 countries 
 countries <- unique(GEOLOCATION$location)
@@ -132,9 +132,10 @@ CONN.OECD <- left_join(CONN.loc, OECD.WDI, key = location)
 ########################
 
 # summarize duration by IP
-CONN.DUR.SUM.IP <- CONN.OECD %>% group_by(id.orig_h) %>%
-  select() %>%
-  summarise(duration)
+CONN.DUR.SUM.IP <- CONN.OECD %>% select(date, id.orig_h, duration) %>%
+  filter(!is.na(duration)) %>% 
+  group_by(id.orig_h) %>% 
+  summarise(sumdur = sum(duration))
   
 # summarize duration by location
 CONN.DUR.SUM.LOCATION <- CONN.OECD
