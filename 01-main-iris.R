@@ -61,18 +61,4 @@ CONN$TS <- anytime(CONN$ts)
 CONN$durationnum <- as.numeric(CONN$duration)
 summary(CONN$durationnum)
 
-#DataMain <- data.table::fread("./data/data/data.txt")
-#DataMain <- head(DataMain,200000)
-#save(DataMain, file = "HeadMain.RData")
-
-#DataTotal <- fread("C:/Users/Moritz/Dropbox/DatafestTeamTori/Data/data/data/data.txt")
-#save(DataTotal, file = "DataTotal.RData")
-
-# load
-#load("sampleDest.RData")
-
-#####################
-### Preparation #####
-#####################
-
-### 
+CountryCount <- CONNGEOLOCATION %>% dplyr::group_by(location) %>% summarize(count=n())
