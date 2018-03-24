@@ -136,118 +136,69 @@ save(CONN.OECD, file = "./oecd-data/CONN.OECD.r")
 rm(CONN, DNS)
 
 load("./oecd-data/CONN.OECD.r")
+
+# compute curation per week by country
 DUR.LOC <- CONN.OECD %>% select(date, duration, location) %>% 
   filter(!is.na(duration)) %>%
   mutate(week = week(date), year = year(date))
-DUR.LOC <- DUR.LOC %>% group_by(year, week) %>%
-         exp.week = vec) %>%
-  group_by()
-  summarize()
-  r
-         
-# DUR.LOC$year <- as.numeric(DUR.LOC$year) 
+
+DUR.LOC$week <- ifelse(DUR.LOC$week == 33 & DUR.LOC$year == 2014, 1, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 34 & DUR.LOC$year == 2014, 2, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 35 & DUR.LOC$year == 2014, 3, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 36 & DUR.LOC$year == 2014, 4, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 37 & DUR.LOC$year == 2014, 5, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 38 & DUR.LOC$year == 2014, 6, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 39 & DUR.LOC$year == 2014, 7, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 40 & DUR.LOC$year == 2014, 8, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 41 & DUR.LOC$year == 2014, 9, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 42 & DUR.LOC$year == 2014, 10, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 43 & DUR.LOC$year == 2014, 11, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 44 & DUR.LOC$year == 2014, 12, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 45 & DUR.LOC$year == 2014, 13, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 46 & DUR.LOC$year == 2014, 14, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 47 & DUR.LOC$year == 2014, 15, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 48 & DUR.LOC$year == 2014, 16, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 49 & DUR.LOC$year == 2014, 17, DUR.LOC$week) 
+DUR.LOC$week <- ifelse(DUR.LOC$week == 50 & DUR.LOC$year == 2014, 18, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 51 & DUR.LOC$year == 2014, 19, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 52 & DUR.LOC$year == 2014, 20, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 53 & DUR.LOC$year == 2014, 21, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 1 & DUR.LOC$year == 2015, 22, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 2 & DUR.LOC$year == 2015, 23, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 3 & DUR.LOC$year == 2015, 24, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 4 & DUR.LOC$year == 2015, 25, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 5 & DUR.LOC$year == 2015, 26, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 6 & DUR.LOC$year == 2015, 27, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 7 & DUR.LOC$year == 2015, 28, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 8 & DUR.LOC$year == 2015, 29, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 9 & DUR.LOC$year == 2015, 30, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 10 & DUR.LOC$year == 2015, 31, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 11 & DUR.LOC$year == 2015, 32, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 12 & DUR.LOC$year == 2015, 33, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 13 & DUR.LOC$year == 2015, 34, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 14 & DUR.LOC$year == 2015, 35, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 15 & DUR.LOC$year == 2015, 36, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 16 & DUR.LOC$year == 2015, 37, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 17 & DUR.LOC$year == 2015, 38, DUR.LOC$week)
+DUR.LOC$week <- ifelse(DUR.LOC$week == 18 & DUR.LOC$year == 2015, 39, DUR.LOC$week)
+DUR.LOC$week <- as.numeric(DUR.LOC$week)
+
+# DUR.LOC <- DUR.LOC %>% group_by(location, week) %>%
+#   summarize(dur.p.week = sum(duration)) %>% 
+#   filter(location = one_of(c("China", "United States", "Korea", "Japan", "Russian Federation", "Brazil", "Germany", "Italy", "India", "Taiwan")))
+
+DUR.LOC <- DUR.LOC %>% group_by(location, week) %>%
+  summarize(dur.p.week = sum(duration)) %>% 
+  filter(location %in% c("China", "United States", "Russian Federation", "Brazil"))
+#DUR.LOC$dur.p.week <- as.numeric(DUR.LOC$dur.p.week/60)
+DUR.LOC$dur.p.week <- round(DUR.LOC$dur.p.week)
+
+DUR.LOC <- DUR.LOC %>% group_by(location, week) %>%
+  summarize(dur.p.week = sum(duration)) %>%
+  filter(location != "Germany")
+DUR.LOC$dur.p.week <- round(DUR.LOC$dur.p.week)
+
+plot1 <- DUR.LOC %>% ggplot(aes(x=week, y=dur.p.week, fill=location)) + 
+  geom_area()
 
 
-# DUR.LOC <- if(DUR.LOC$year == 2014) {
-#     mutate(DUR.LOC, exp.week = week-32) 
-# } else {
-#     replace(DUR.LOC, exp.week, week+21)
-#   }
-#   
-  
-         
-  
-
-
-
-conngeo$formatteddate <- anytime(conngeo$ts)
-
-
-
-conngeo$formatteddate <- as.Date(conngeo$formatteddate)
-conngeo$year <- substr(conngeo$formatteddate,1,4)
-
-conngeo$yearmonth <- as.yearmon(conngeo$formatteddate)
-conngeo$yearmonthf <- factor(conngeo$yearmonth)
-conngeo$monthf <- months.Date(conngeo$formatteddate)
-conngeo$week <- strftime(conngeo$formatteddate, format = "%V")
-
-conngeo$week <- as.numeric(conngeo$week)
-
-conngeo$day <- weekdays(as.Date(conngeo$formatteddate))
-
-
-
-
-
-
-
-# summarize duration by IP
-CONN.DUR.SUM.IP <- CONN.OECD %>% select(date, id.orig_h, duration) %>%
-  filter(!is.na(duration)) %>% 
-  group_by(id.orig_h) %>% 
-  summarise(sumdur = sum(duration))
-  
-# summarize duration by location
-CONN.DUR.SUM.LOCATION <- CONN.OECD
-
-
-#1. scatterplot - duration and frequency of IP address# 
-plot1 <- CONN %>% ggplot(aes(x = duration, y = Freq.y), na.rm = T)+
-  geom_point()
-
-#2. scatterplot - duration and frequency of IP address, w/o Germany# 
-
-plot2 <- CONN %>% filter(Freq.y < 10000) %>%  
-  ggplot(aes(x = duration, y = Freq.y), na.rm = T)+
-  geom_point()
-
-#3. scatterplot - aggregated duration and IP address#
-
-plot3 <- SUMDUR %>% ggplot(aes(x = sumdur, y = Freq), na.rm = T)+
-  geom_point()
-
-#4. scatterplot - aggregated duration and IP address, with colours etc.#
-
-plot4 <- SUMDUR %>% ggplot(aes(x = sumdur, y = Freq), na.rm = T)+
-  geom_point()
-
-
-#country count
-CountryCount <- CONN %>% group_by(location) %>% summarise(count=n())
-CountryCount <- merge(CountryCount, locFreq, by = 'location')
-locFreq <- rename(locFreq, location = Var1)
-
-#sum of the durations # 
-SUMDUR <- CONN %>% select(ts, id.orig_h, duration) %>%
-  filter(!is.na(duration)) %>% 
-  group_by(id.orig_h) %>% 
-  summarise(sumdur = sum(duration))
-
-sum(is.na(SUMDUR$sumdur))
-sum(is.na(CONN$duration))
-
-SUMDUR <- merge(SUMDUR, IPfreq, by = 'id.orig_h')
-
-#add country data to SUMDUR# 
-SUMDUR <- merge(SUMDUR, GEOLOCATION, by = 'id.orig_h')
-
-
-
-
-
-
-CONN %>% filter(Freq.y < 10000) %>%  
-  ggplot(aes(x = duration, y = Freq.y), na.rm = T)+
-  geom_point()
-
-
-
-
-
-
-######################
-###### Graphics ######
-######################
-
-# World Map
