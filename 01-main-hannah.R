@@ -200,6 +200,27 @@ AT.PER.DAY <- CONN.OECD %>% select(date) %>%
 CONN.OECD1 <- CONN.OECD %>% select(location, locFreq) %>% 
   arrange(locFreq)
 
+#bar chart secure servers
+options(scipen=999)
+bardf <- CONN.OECD %>% select(secureServer.per.million, location) %>% 
+  filter(location == 'Russian Federation' | location == 'China' |
+           location == 'United States' | location == 'Netherlands' | location == 'Brazil') %>% 
+  group_by(location) %>% summarise(servers= max(secureServer.per.million))
+
+
+positions <- c("Netherlands", "United States", "Russian Federation", "Brazil", "China")
+
+
+barchart <- ggplot(bardf, aes(x=location, y=servers)) + 
+  geom_bar(stat="identity", fill="tomato3") + 
+  labs(title="Number of Secure Servers per million people", 
+       subtitle="of the five countries with the most requests to honeynet", 
+       caption="source: OECD") + 
+  labs(x="Number of servers per million people", y="Country")+
+  scale_x_discrete(limits = positions)+
+  geom_text(aes(label=bardf$servers), position=position_dodge(width=0.9), vjust=-0.25)
+
+
 
 
           
