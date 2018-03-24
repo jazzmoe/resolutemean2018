@@ -45,6 +45,8 @@ CONN$duration <- as.numeric(CONN$duration)
 CONN$duration <- as.numeric(as.character(CONN$duration))
 summarise(CONN, mean = mean(duration, na.rm = T), min = min(duration, na.rm = T),
           max = max(duration, na.rm = T))
+#change time stamp#
+
 library(anytime)
 CONN$ts <- anytime(CONN$ts)
 glimpse(CONN)
@@ -54,18 +56,27 @@ hist(CONN$duration)
 CONNDUR <- CONN %>% 
   select(ts, duration) %>% 
   filter(!is.na(duration)) %>% 
-  arrange(duration) %>% 
-  summarise(`25%`=quantile(duration, probs=0.25),
+  arrange(duration)
+
+sum(is.na(CONN$duration))
+
+SUMCONDUR <- summarise(CONNDUR, 
+            `25%`=quantile(duration, probs=0.25),
             `50%`=quantile(duration, probs=0.5),
             `75%`=quantile(duration, probs=0.75),
             avg=mean(duration),
             n=n())
-
-count(is.na)
-
 head(CONNDUR)
 tail(CONNDUR)
 
+#histogram#
+temp <- filter(CONNDUR, duration > 500)
+hist(temp$duration)
+
+#log temp$duration#
+hist(log(temp$duration))
+
+#scatterplot - duration and frequency of IP address# 
 
 
 unique(GEO$location)
