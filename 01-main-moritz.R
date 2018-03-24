@@ -151,11 +151,10 @@ AT.PER.DAY <- CONN.OECD %>% select(ts) %>%
          date.day = as.Date(ts),
          monthf = as.factor(month(ts)),
          year = as.numeric(year(ts))) %>% select(-ts)
-AT.PER.DAY <- ddply(AT.PER.DAY, .(monthf), transform, monthweek = 1+yearweek-min(yearweek))
 AT.PER.DAY <- AT.PER.DAY %>% 
   group_by(yearweek, weekday, date.day, monthf, year, monthweek) %>% 
   summarise(requestFreq = n())
-
+AT.PER.DAY$monthf <- factor(AT.PER.DAY$monthf, levels=as.character(1:12),
 
 P <- AT.PER.DAY %>% ggplot(aes(monthweek, weekday, fill = requestFreq)) +
   geom_tile(colour = "white") + facet_grid(year~monthf) + scale_fill_gradient(low="yellow", high="red") + xlab("Week of Month") + ylab("")
