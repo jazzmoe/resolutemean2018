@@ -79,6 +79,34 @@ plot (SumDurFreqNoOutliers$`sum(durationnum)`, SumDurFreqNoOutliers$Freq)
 SumDurFreqLoc <- merge(SumDurFreq, GEOLOCATION, by="id.orig_h")
 SumDurFreqLoc$ip <- NULL
 
+#Exploring outliers
+unique(CONN$proto)
+
+#Dataframe with duration, frequency, location, and time
+SumDurFreqLocTime <- merge(SumDurFreqLoc, CONN, by="id.orig_h")
+#Deleting superfluous variables
+SumDurFreqLocTime$uid <- NULL
+SumDurFreqLocTime$id.orig_p <- NULL
+SumDurFreqLocTime$id.resp_h <- NULL
+SumDurFreqLocTime$id.resp_p <- NULL
+SumDurFreqLocTime$proto <- NULL
+SumDurFreqLocTime$service <- NULL
+SumDurFreqLocTime$orig_bytes <- NULL
+SumDurFreqLocTime$resp_bytes <- NULL
+SumDurFreqLocTime$conn_state <- NULL
+SumDurFreqLocTime$local_orig <- NULL
+SumDurFreqLocTime$local_resp <- NULL
+SumDurFreqLocTime$missed_bytes <- NULL
+SumDurFreqLocTime$history <- NULL
+SumDurFreqLocTime$orig_pkts <- NULL
+SumDurFreqLocTime$orig_ip_bytes <- NULL
+SumDurFreqLocTime$resp_pkts <- NULL
+SumDurFreqLocTime$resp_ip_bytes <- NULL
+SumDurFreqLocTime$tunnel_parents <- NULL
+SumDurFreqLocTime$tunnel_parents <- NULL
+#plotting by duration and ts
+plot(durationnum ~ ts, data=subset(SumDurFreqLocTime, location =="United States"))
+
 try(setwd("C:/Users/MsUser/Documents/GitHub/resolutemean2018"), silent = TRUE)
 
 load("./oecd-data/OECD.WDI.r")
