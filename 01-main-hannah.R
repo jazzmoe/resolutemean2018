@@ -36,7 +36,7 @@ source("00-packages.r")
 #WEIRD <- data.table::fread("./data/data/weird.csv")
 #HOST <- data.table::fread("./data/data/host.csv")
 CONN <- data.table::fread("./data/data/conn.csv")
-GEO <-  data.table::fread("./data/data/geolocation.csv")
+GEOLOCATION <-  data.table::fread("./data/data/geolocation.csv")
 FILES <-  data.table::fread("./data/data/files.csv")
 
 #Info geolocation
@@ -82,9 +82,27 @@ hist(temp$duration)
 #log temp$duration#
 hist(log(temp$duration))
 
+# unique IP addresses
+length(unique(CONN$id.orig_h))
+uniqueIP <- unique(CONN$id.orig_h)
+
+# frequency of IP
+IPfreq <- as.data.frame(table(CONN$id.orig_h)) %>% rename(id.orig_h = Var1)
+CONN <- left_join(CONN, IPfreq, by="id.orig_h")
+GEOLOCATION <- rename(GEOLOCATION, id.orig_h = ip)
+CONN <- left_join(CONN, GEOLOCATION, by="id.orig_h")
+CONN <- select(CONN, -Freq.x)
+
+# 158 countries 
+length(unique(GEOLOCATION$location))
+length(unique(GEOLOCATION$id.orig_h))
+locFreq <- as.data.frame(table(GEOLOCATION$location))
+
 #scatterplot - duration and frequency of IP address# 
-
-
+glimpse(CONN)
+CONN %>% filter(Freq.y < 10000) %>%  
+ggplot(aes(x = duration, y = Freq.y), na.rm = T)+
+  geom_point()
 
 
 

@@ -59,6 +59,8 @@ IPfreq <- as.data.frame(table(CONN$id.orig_h)) %>% rename(id.orig_h = Var1)
 CONN <- left_join(CONN, IPfreq, by="id.orig_h")
 GEOLOCATION <- rename(GEOLOCATION, id.orig_h = ip)
 CONN <- left_join(CONN, GEOLOCATION, by="id.orig_h")
+CONN <- select(CONN, -Freq.x)
+glimpse(CONN)
 
 # 158 countries 
 length(unique(GEOLOCATION$location))
