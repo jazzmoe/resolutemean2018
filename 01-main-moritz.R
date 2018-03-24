@@ -112,6 +112,9 @@ save(OECD.WDI, file = "./oecd-data/OECD.WDI.r")
 load("./oecd-data/OECD.WDI.r")
 OECD.WDI$secureServer.per.million <- round(OECD.WDI$secureServer.per.million)
 
+### CONN without location
+CONN.loc <- CONN %>% filter(!is.na(CONN$location))
+
 ######################
 ### Descriptives #####
 ######################
