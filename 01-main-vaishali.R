@@ -112,13 +112,15 @@ conngeo$day <- weekdays(as.Date(conngeo$formatteddate))
 
 conngeo <- ddply(conngeo,.(yearmonthf), transform, monthweek=1+week-min(week))
 
+conn$duration <- as.numeric(as.character(conn$duration))
+
 
 
 conn1 <- conngeo[, c("week", "duration", "location", "yearmonthf")]
 
 
 conn2 <- filter(conn1, location=="United States"|location=="Germany")
-ggplot(conn2, aes(week, duration, group=location, color=location)) + geom_line() +
+ggplot(conn2, aes(yearmonthf, duration, group=location, color=location)) + geom_line() +
    xlab("") + ylab("Duration")
 
 #######################################################################################
