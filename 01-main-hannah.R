@@ -114,9 +114,9 @@ plot2 <- CONN %>% filter(Freq.y < 10000) %>%
 plot3 <- SUMDUR %>% ggplot(aes(x = sumdur, y = Freq), na.rm = T)+
   geom_point()
 
-#3. scatterplot - aggregated duration and IP address#
+#4. scatterplot - aggregated duration and IP address, with colours etc.#
 
-plot4 <- SUMDUR %>% ggplot(aes(x = sumdur, y = Freq, colour = location), na.rm = T)+
+plot4 <- SUMDUR %>% ggplot(aes(x = sumdur, y = Freq), na.rm = T)+
   geom_point()
 
 
