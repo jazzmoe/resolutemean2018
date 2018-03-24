@@ -8,6 +8,12 @@ library(zoo)
 install.packages("anytime")
 library(anytime)
 library(plyr)
+install.packages("xlsx")
+library(xlsx)
+library(foreign)
+install.packages("readstata13")
+library(readstata13)
+
 
 rm(diamonds2)
 
@@ -42,44 +48,29 @@ longduration$formatteddate <- anytime(longduration$ts)
 longduration$formatteddate <- as.Date(longduration$formatteddate)
 
 longduration$datecount <- as.character(longduration$formatteddate)
-
-longduration$totalconn %>% group_by(longduration$formatteddate) %>% summarise(count())
-  dplyr::(longduration$datecount)
-
 longduration$year <- substr(longduration$formatteddate,1,4)
 
-connections$yearmonth <- as.yearmon(connections$formatteddate)
-connections$yearmonthf <- factor(connections$yearmonth)
-connections$monthf <- months.Date(connections$formatteddate)
-connections$week <- strftime(connections$formatteddate, format = "%V")
+longduration$yearmonth <- as.yearmon(longduration$formatteddate)
+longduration$yearmonthf <- factor(longduration$yearmonth)
+longduration$monthf <- months.Date(longduration$formatteddate)
+longduration$week <- strftime(longduration$formatteddate, format = "%V")
+longduration$week <- as.numeric(longduration$week)
+longduration$day <- weekdays(as.Date(longduration$formatteddate))
+longduration <- ddply(longduration,.(yearmonthf), transform, monthweek=1+week-min(week))
+conn1 <- longduration[, c("year", "yearmonthf", "monthf", "week", "monthweek", "day")]
 
-connections$week <- as.numeric(connections$week)
+write.dta(conn1, "C:/Users/Eduado Acosta/Desktop/Semester 4/Applied Methods in Policy Evaluation/conn1.dta")
 
-connections$day <- weekdays(as.Date(connections$formatteddate))
+dat <- read.dta13("C:/Users/Eduado Acosta/Documents/datafest 18/data/datafest2018_data_and_documentation/data/conn1.dta")
 
-connections <- ddply(connections,.(yearmonthf), transform, monthweek=1+week-min(week))
-
-###
-connections$date <- toString(connections$formatteddate)
-
-connections$totalconn %>% group_by(formatteddate) %>% summarise(sum )
-
-connections$totalconn <- count(connections, c('formatteddate'))
-
-
-
-conn1 <- connections[, c("year", "yearmonthf", "monthf", "week", "monthweek", "day", "orig_ip_bytes")]
-
-head(conn1)
-
-plot1 <- ggplot2::ggplot(conn1, aes(monthweek, day, fill = orig_ip_bytes)) + 
+plot1 <- ggplot2::ggplot(dat, aes(monthweek, day, fill = count)) + 
   geom_tile(colour = "white") + 
   facet_grid(year~monthf) + 
   scale_fill_gradient(low="red", high="green") +
   labs(x="Week of Month",
        y="",
        title = "Time-Series Calendar Heatmap", 
-       subtitle="Conn data", fill = "orig_ip_bytes")
+       subtitle="Conn data", fill = "count")
 
 plot1
 ggsave(plot1, "plot1.png")
