@@ -24,6 +24,7 @@ try(setwd("includeyourfolder"), silent = TRUE)
 source("00-packages.r")
 #source("functions.r")
 library(outliers)
+library(magrittr)
 
 options(scipen=999)
 
@@ -51,11 +52,43 @@ conngeo <- merge(conn, geolocation, by = "id.orig_h")
 ### Preparation #####
 #####################
 
-### 
+##########################Outlier analysis#######################################
+library(outliers)
+conngeo$duration <- as.numeric(conngeo$duration)
 
-#Calendar heat map
+#Variables with an outlier
+chisq.out.test(conngeo$duration)
+chisq.out.test(conngeo$orig_ip_bytes)
+chisq.out.test(conngeo$resp_ip_bytes)
 
-library(ggplot2)
+outliers <- conngeo %>%  filter(duration==2157.128511 | orig_ip_bytes==330177 |resp_ip_bytes==4433136) %>% select(id.orig_h)
+
+outliers
+
+################################################################################
+
+weird <- data.table::fread("C:/Users/WINDOWS-PC/Dropbox/Datafest 2018/datafest2018_data_and_documentation/data/weird.csv")
+
+
+
+countrycount <- conngeo %>% dplyr::group_by(location) %>% summarize(count=n())
+
+##Korea heat map by IP addresses
+korea <- conngeo %>% dplyr::filter(location=="Korea")
+
+library(ggmap)
+for (i in 1:nrow(korea)) {
+  latlon = geocode(korea[i,1])
+  korea$lon[i] = as.numeric(latlon[1])
+  korea$lat[i] = as.numeric(latlon[2])
+}
+
+bbox <- make_bbox(korea$lon,korea$lat,f=1)
+b <- get_map(bbox)
+
+ggmap(b) + geom_point(data=korea, aes(lon, lat), size=2, alpha=0.7)
+
+#####################TIME SERIES PLOT#######################
 library(plyr)
 library(scales)
 library(zoo)
@@ -79,11 +112,25 @@ conngeo$day <- weekdays(as.Date(conngeo$formatteddate))
 
 conngeo <- ddply(conngeo,.(yearmonthf), transform, monthweek=1+week-min(week))
 
-conn1 <- conngeo[, c("year", "yearmonthf", "monthf", "week", "monthweek", "day", "orig_ip_bytes")]
+conn$duration <- as.numeric(as.character(conn$duration))
 
-head(conn1)
 
-plot1 <- ggplot2::ggplot(conn1, aes(monthweek, day, fill = orig_ip_bytes)) + 
+
+conn1 <- conngeo[, c("week", "duration", "location", "yearmonthf")]
+
+
+conn2 <- filter(conn1, location=="United States"|location=="Germany")
+ggplot(conn2, aes(yearmonthf, duration, group=location, color=location)) + geom_line() +
+   xlab("") + ylab("Duration")
+
+###Stacked area plot
+ggplot(conn2, aes(yearmonthf, duration, group=location, fill=location)) + geom_area(position = 'identity')
+
+
+
+#######################################################################################
+
+#plot1 <- ggplot2::ggplot(conn1, aes(monthweek, day, fill = orig_ip_bytes)) + 
   geom_tile(colour = "white") + 
   facet_grid(year~monthf) + 
   scale_fill_gradient(low="red", high="green") +
