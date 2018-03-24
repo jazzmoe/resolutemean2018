@@ -134,10 +134,13 @@ save(CONN.OECD, file = "./oecd-data/CONN.OECD.r")
 ##### Descriptives #####
 ########################
 rm(CONN, DNS)
-# 
+
+load("./oecd-data/CONN.OECD.r")
 DUR.LOC <- CONN.OECD %>% select(date, duration, location) %>% 
   filter(!is.na(duration)) %>%
-  mutate(week = week(date), year = year(date)) %>%
+  mutate(week = week(date), year = year(date))
+DUR.LOC <- DUR.LOC %>% group_by(year, week) %>%
+         exp.week = vec) %>%
   group_by()
   summarize()
   r
