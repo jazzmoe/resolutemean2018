@@ -133,6 +133,34 @@ save(CONN.OECD, file = "./oecd-data/CONN.OECD.r")
 ########################
 ##### Descriptives #####
 ########################
+
+# number of attempts aggregated per day
+AT.PER.DAY <- CONN.OECD %>% select(ts) %>%
+  mutate(date.day = as.Date(ts)) %>% select(date.day) %>%
+  group_by(date.day) %>% summarize(requestFreq = n())
+
+
+
+
+# c("Russia", "China", "US", "Netherlands", "Korea", "Brazil")
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 rm(CONN, DNS)
 
 load("./oecd-data/CONN.OECD.r")
