@@ -7,6 +7,7 @@ data
 Rdata
 *.csv
 *.Rhistory
+oecd-data
 
 # Folder config file
 Desktop.ini

@@ -61,18 +61,8 @@ CONN$TS <- anytime(CONN$ts)
 CONN$durationnum <- as.numeric(CONN$duration)
 summary(CONN$durationnum)
 
-#DataMain <- data.table::fread("./data/data/data.txt")
-#DataMain <- head(DataMain,200000)
-#save(DataMain, file = "HeadMain.RData")
+CountryCount <- CONNGEOLOCATION %>% dplyr::group_by(location) %>% summarize(count=n())
 
-#DataTotal <- fread("C:/Users/Moritz/Dropbox/DatafestTeamTori/Data/data/data/data.txt")
-#save(DataTotal, file = "DataTotal.RData")
+try(setwd("C:/Users/MsUser/Documents/GitHub/resolutemean2018"), silent = TRUE)
 
-# load
-#load("sampleDest.RData")
-
-#####################
-### Preparation #####
-#####################
-
-### 
+load("./oecd-data/OECD.WDI.r")
