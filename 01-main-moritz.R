@@ -201,4 +201,4 @@ DUR.LOC$dur.p.week <- round(DUR.LOC$dur.p.week)
 plot1 <- DUR.LOC %>% ggplot(aes(x=week, y=dur.p.week, fill=location)) + 
   geom_area()
 
-
+# changes
