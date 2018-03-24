@@ -59,8 +59,6 @@ IPfreq <- as.data.frame(table(CONN$id.orig_h)) %>% rename(id.orig_h = Var1)
 CONN <- left_join(CONN, IPfreq, by="id.orig_h")
 GEOLOCATION <- rename(GEOLOCATION, id.orig_h = ip)
 CONN <- left_join(CONN, GEOLOCATION, by="id.orig_h")
-CONN <- select(CONN, -Freq.x)
-glimpse(CONN)
 
 # 158 countries 
 countries <- unique(GEOLOCATION$location)
@@ -74,13 +72,21 @@ locFreq <- as.data.frame(table(GEOLOCATION$location))
 
 temp <- read_csv("./oecd-data/WDIData.csv")
 names(temp)[1] <- "Country"
+names(temp)[4] <- "Indicator"
 OECD.WDI <- temp[temp$Country %in% countries,]
-OECD.WDI <- OECD.WDI[]
+
+OECD.vars <- as.character(c("ER.H2O.FWAG.ZS", "ER.H2O.FWDM.ZS", "ER.H2O.FWIN.ZS", "ER.H2O.FWTL.ZS", "TX.VAL.OTHR.ZS.WT", "TM.VAL.OTHR.ZS.WT", "BX.GSR.CMCP.ZS", "BM.GSR.CMCP.ZS", "IC.IMP.COST.CD",
+"SE.XPD.CTOT.ZS", "EG.USE.ELEC.KH.PC", "EG.ELC.HYRO.ZS", "IC.FRM.THEV.ZS", "IT.NET.BBND", "IT.NET.BBND.P2", "NY.GDP.PCAP.KD", "NY.GDP.PCAP.CD", "SI.POV.GINI", "TX.VAL.TECH.MF.ZS",
+"TX.VAL.ICTG.ZS.UN", "TM.VAL.ICTG.ZS.UN", "EG.FEC.RNEW.ZS", "ER.H2O.INTR.PC", "ER.H2O.INTR.K3", "IP.JRN.ARTC.SC", "IT.NET.SECR", "IT.NET.SECR.P6", "SP.POP.TECH.RD.P6", "BX.GSR.CCIS.CD", "SH.H2O.SAFE.ZS",
+"SH.H2O.SAFE.RU.ZS", "SH.H2O.SAFE.UR.ZS", "IE.PPI.ICTI.CD", "MS.MIL.XPND.GD.ZS", "MS.MIL.XPND.ZS", "IC.BUS.NREG", "SH.H2O.BASW.ZS", "SH.H2O.BASW.RU.ZS", "SH.H2O.BASW.UR.ZS"))
+
+OECD.WDI <- OECD.WDI[OECD.WDI$Indicator %in% OECD.vars,]
 rm(temp)
 
+save(OECD.WDI, file = "./oecd-data/OECD.WDI.r")
 
 ######################
 ### Descriptives #####
 ######################
 
-
+#abd
