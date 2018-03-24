@@ -23,7 +23,8 @@ p.needed <- c("readr", # imports spreadsheet data (Wickham)
               "sjPlot", "sjmisc",
               "survey",
               "rvest", # whickham for web scraping
-              "data.table"
+              "data.table",
+              "anytime"
               )
 
 # install packages which are not in installed.packages()
