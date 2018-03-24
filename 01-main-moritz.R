@@ -135,14 +135,46 @@ save(CONN.OECD, file = "./oecd-data/CONN.OECD.r")
 ########################
 
 # number of attempts aggregated per day
+# requestFreq <- CONN.OECD %>% select(ts) %>%
+#   mutate(monthweek = week(ts),
+#          weekday = weekdays(ts),
+#          date.day = as.Date(ts)) %>%
+#   group_by(date.day) %>%
+#   summarize(requestFreq = n())
+# 
+# plot1 <- requestFreq %>% ggplot(aes(x=date.day, y=requestFreq)) + 
+#   geom_area()
+
 AT.PER.DAY <- CONN.OECD %>% select(ts) %>%
-  mutate(date.day = as.Date(ts)) %>% select(date.day) %>%
-  group_by(date.day) %>% summarize(requestFreq = n())
+  mutate(yearweek = as.numeric(week(ts)),
+         weekday = as.factor(weekdays(ts)),
+         date.day = as.Date(ts),
+         monthf = as.factor(month(ts)),
+         year = as.numeric(year(ts))) %>% select(-ts)
+AT.PER.DAY <- ddply(AT.PER.DAY, .(monthf), transform, monthweek = 1+yearweek-min(yearweek))
+AT.PER.DAY <- AT.PER.DAY %>% 
+  group_by(yearweek, weekday, date.day, monthf, year, monthweek) %>% 
+  summarise(requestFreq = n())
 
 
+P <- AT.PER.DAY %>% ggplot(aes(monthweek, weekday, fill = requestFreq)) +
+  geom_tile(colour = "white") + facet_grid(year~monthf) + scale_fill_gradient(low="yellow", high="red") + xlab("Week of Month") + ylab("")
+P
 
 
-# c("Russia", "China", "US", "Netherlands", "Korea", "Brazil")
+# plot1 <- AT.PER.DAY %>% ggplot(aes(monthweek, weekday, fill = requestFreq)) + 
+#   geom_tile(colour = "white") + 
+#   facet_grid(year~monthf) + 
+#   scale_fill_gradient(low="red", high="green") +
+#   labs(x="Week of Month",
+#        y="",
+#        title = "Time-Series Calendar Heatmap", 
+#        subtitle="Conn data", fill = "orig_ip_bytes")
+# 
+# plot1
+
+
+# c("Russian Federation", "China", "United States", "Netherlands", "Brazil")
 
 
 
