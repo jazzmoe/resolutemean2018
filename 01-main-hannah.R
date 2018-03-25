@@ -216,7 +216,7 @@ barchart <- ggplot(bardf, aes(x=location, y=servers)) +
   labs(title="Number of Secure Servers per million people", 
        subtitle="of the five countries with the most requests to honeynet", 
        caption="source: OECD") + 
-  labs(x="Number of servers per million people", y="Country")+
+  labs(x="Country", y="Number of servers per million people")+
   scale_x_discrete(limits = positions)+
   geom_text(aes(label=bardf$servers), position=position_dodge(width=0.9), vjust=-0.25)
 
